@@ -1,17 +1,24 @@
 import datetime
-from datetime import datetime
+import requests
+from unittest.mock import Mock
 
 # Save a couple of test days.
 tuesday = datetime.datetime(year=2019, month=1, day=1)
-saturda = datetime.datetime(year=2019, month=1, day=5)
+saturday = datetime.datetime(year=2019, month=1, day=5)
 
 # Mock datetime to control today's date.
 datetime = Mock()
 
 def is_weekday():
-    today = datetime.today()
+    today = datetime.datetime.today()
     # Python's datetime library treats Monday as 0 and Sunday as 6.
-    return (0 <= today.weekday() < 5)
+    return (0 <= today.weekday() and today.weekday() < 5)
+
+def get_holidays():
+    r = requests.get('http://localhost/api/holidays')
+    if r.status_code == 200:
+        return r.json()
+    return None
 
 # Mock .today() to return Tuesday.
 datetime.datetime.today.return_value = tuesday
